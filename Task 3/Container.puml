@@ -1,0 +1,50 @@
+@startuml Warm house container
+title Warm house Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "Client", "A user of the warm house service")
+Person(OfficeManager, "Bank Manager", "The manager for iteracting with users")
+Person(DepositManager, "Deposit manager", "Deposit manager")
+Person(LoanManager, "Loan manager", "Loan manager")
+
+System(BankSystem, "Bank System", "System of the bank.")
+System_Ext(TelekomOperator, "Telekom operator", "Telekom for sending SMS")
+System_Ext(ParnterCallCenter, "Partner call center", "Partner call center")
+
+Container_Boundary(BankSystem, "Warm House System") {
+  Container(InternetBank, "Internet Bank", "ASP.NET", "Internet Banking")
+  Container(InternetBankDb, "Database", "MS SQL", "Internet Banking Database")
+  Container(WebSite, "Web site", "PHP & React.js", "Web site")
+  Container(ABS, "ABS", "Delphi", "ABS")
+  Container(ABSDb, "Database", "Oracle", "ABS database")
+  Container(CallCenter, "Call Center", "Java Spring Boot", "Call center system")
+  Container(CallCenterDb, "Database", "PostgreSQL", "Call center database")
+  Container(SMSGateway, "SMS Gateway", "Gateway", "SMS Gateway system")
+  Container(Kong, "Api Gateway", "Kong", "For balancing the traffic")
+  Container(Kafka, "Kafka", "Kafka", "Kafka")
+}
+
+
+Rel(user, InternetBank, "Deposit info, Deposit requests")
+Rel(user, WebSite, "Deposit info, Deposit requests")
+Rel(user, OfficeManager, "Deposit info, Deposit requests")
+Rel(user, ParnterCallCenter, "Making info calls")
+Rel(user, CallCenter, "Gets info and set up pre requests")
+Rel(TelekomOperator, user, "Deposit statuses and codes")
+Rel(InternetBank, InternetBankDb, "Uses database")
+Rel(CallCenter, CallCenterDb, "Uses database")
+Rel(ABS, ABSDb, "Uses database")
+Rel(SMSGateway, TelekomOperator, "Sends commands")
+Rel(OfficeManager, ABS, "Deposit creation")
+Rel(OfficeManager, WebSite, "Gets clients requests and sends to ABS")
+Rel(OfficeManager, InternetBank, "Gets clients requests and sends to ABS")
+Rel(ABS, SMSGateway, "Sends user request statuses")
+Rel(DepositManager, ABS, "Gets deposits requests and sets stavkas")
+Rel(DepositManager, InternetBank, "Gets deposti requests")
+Rel(SMSGateway, Kafka, "Gets sms events")
+Rel(DepositManager, LoanManager, "Send request to get some extra info")
+Rel(LoanManager, ABS, "Get data to prepare extra datas")
+@enduml
