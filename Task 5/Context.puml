@@ -7,17 +7,19 @@ top to bottom direction
 
 Person(user, "Client", "A user of the bank")
 Person(OfficeManager, "Bank Manager", "The manager for iteracting with clients")
-Person(DepositManager, "Deposit manager", "Deposit manager")
+Person(LoanManager, "Loan manager", "Loan manager")
 
 System(BankSystem, "Bank System", "System of the bank.")
 System_Ext(TelekomOperator, "Telekom operator", "Telekom for sending SMS")
 System_Ext(ParnterCallCenter, "Partner call center", "Partner call center")
+System_Ext(CreditHistory, "Bureau of credit history", "Users credit history")
 
-Rel(user, BankSystem, "Deposit info, Deposit requests")
+Rel(user, BankSystem, "Loan info, Loan requests")
 Rel(user, ParnterCallCenter, "Making info calls")
-Rel(user, OfficeManager, "Deposit info, Deposit requests")
+Rel(user, OfficeManager, "Loan info, Loan requests")
 Rel(BankSystem, TelekomOperator, "Sends commands to send SMS")
 Rel(TelekomOperator, user, "Sends SMS")
-Rel(OfficeManager, BankSystem, "Deposit creation")
-Rel(DepositManager, BankSystem, "Works with deposits")
+Rel(OfficeManager, BankSystem, "Loan creation")
+Rel(LoanManager, BankSystem, "Works with loans")
+Rel(LoanManager, CreditHistory, "Gets clients credit history")
 @enduml

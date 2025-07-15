@@ -1,0 +1,29 @@
+@startuml
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(client, "client")
+Person(internal_op, "Internal Call-Center Operator")
+Person(partner_op,  "Partner Call-Center Operator")
+System(bank, "Bank system")
+
+System_Boundary(bank, "Bank Core System") {
+    ContainerDb(rates_db, "Rates DB", "PostgreSQL", "Хранение ставок по депозитам")
+    Container(RateService, "Rate Service", "ASP.NET", "REST-доступ к ставкам, подписка на Kafka")
+    Container(ABS, "ABS", "Delphi", "ABS")
+    Container(ABSDb, "Database", "Oracle", "ABS database")
+    Container(CallCenter, "Call Center", "Java Spring Boot", "Call center system")
+    Container(CallCenterDb, "Database", "PostgreSQL", "Call center database")
+}
+
+Rel(client, internal_op, "Кносультация")
+Rel(client, partner_op, "Консультация")
+Rel(internal_op, CallCenter, "Получение атвок")
+Rel(CallCenter, CallCenterDb, "Получение данных")
+Rel(ABS, ABSDb, "Получение данных")
+Rel(RateService, rates_db, "Получени и сохранение данных")
+Rel(CallCenter, RateService, "Получение данных о ставках")
+Rel(RateService, ABS, "Получает новуые данные о ставках периодически проверяя")
+Rel(RateService, partner_op, "Отправляет по почте партнёру после обновления курсов")
+
+@enduml
